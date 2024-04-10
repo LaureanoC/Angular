@@ -2,7 +2,7 @@
 
 Lista de reproducción del curso
 
-https://youtube.com/playlist?list=PLezsbUDiwcpmhNiMzVPYJXV0Rqn71G4PU&si=-t0x9PgjRvAXVVMU
+https://www.youtube.com/watch?v=f7unUpshmpA&t
 
 
 Instalar angular
