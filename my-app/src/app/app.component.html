@@ -1,0 +1,23 @@
+<app-header/>
+
+<app-user username="Laureano"
+(addFavoriteEvent)="getFavorite($event)"
+/>
+<app-game/>
+
+@if (favorito != '') {
+
+    <p>Favorito: {{ favorito }}</p>
+}
+
+<img 
+(click)="saludo()"
+alt="photo" 
+src="https://github.com/LaureanoC.png"/>
+
+
+
+
+<router-outlet />
+
+

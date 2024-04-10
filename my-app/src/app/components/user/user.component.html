@@ -1,0 +1,10 @@
+@if (isLoggedIn) {
+    <p>Bienvenido! {{username}}</p>
+} @else {
+    <p>Iniciar sesión</p>
+}
+
+<button (click)="isLoggedIn=!isLoggedIn">Cambiar Estado</button>
+
+
+<li (click)="fav('Favorito desde el hijo')">Click para que el padre maneje el evento</li>
