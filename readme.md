@@ -340,3 +340,130 @@ Sin el defer se carga toooooda la página. El defer hace una carga diferida cuan
 ```
 
 <img src="img/angular7.png"/>
+
+## Servicios
+
+Creamos una carpeta dentro de app llamada services. Utilizaremos https://fakestoreapi.com/products para acceder a todos los productos
+
+En app.config vamos a configurar dentro de los providers los equivalentes a varios modulos. Ya tendriamos nuestro modulo httpclient al agregar provideHttpClient()
+
+```js
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideRouter(routes),
+    provideHttpClient()
+  ]
+};
+```
+
+Ejecutamos el siguiente comando para hacer un servicio.
+```
+ng g s services/producto
+```
+Y se nos genera
+
+```js
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProductoService {
+
+  constructor() { }
+}
+```
+
+Modificamos el archivo en any iría una interfaz, y retornamos un observable.
+
+```js
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProductoService {
+
+  private readonly _http = inject(HttpClient)
+
+  getAllProducts():Observable<any>{
+    return this._http.get('https://fakestoreapi.com/products')
+  }
+}
+```
+
+En nuestro componente product$ es un observable.
+
+```js
+import { Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './components/header/header.component';
+import { UserComponent } from './components/user/user.component';
+import { GameComponent } from './components/game/game.component';
+import { ProductoService } from './services/producto.service';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, HeaderComponent, UserComponent, GameComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
+})
+export class AppComponent {
+ 
+  private readonly productService = inject(ProductoService)
+  products$ = this.productService.getAllProducts()
+
+}
+```
+Para utilizar el observable vamos al html
+
+```js
+<pre>{{products$ | async | json }}</pre>
+```
+
+Para que funcione se debe importar el modulo CommonModule dentro del componente el cual utilizará el servicio
+
+```js
+import { Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { ProductoService } from './services/producto.service';
+
+import { CommonModule } from '@angular/common'
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
+})
+export class AppComponent {
+  private readonly productService = inject(ProductoService)
+  products$ = this.productService.getAllProducts()
+}
+
+```
+
+Por ultimo, por defecto angular utiliza el XMLHTTPRequest. Podemos utilizar el fetch nativo de js utilizando withFetch() en app.config.ts
+
+```ts
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { routes } from './app.routes';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideRouter(routes),
+    provideHttpClient(withFetch())
+  ]
+};
+```
